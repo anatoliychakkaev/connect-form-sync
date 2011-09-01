@@ -12,13 +12,11 @@ var server = connect.createServer(
     form(),
     function(req, res, next){
         if (req.form) {
-            req.form.complete(function(err, fields, files){
-                res.writeHead(200, {});
-                if (err) res.write(JSON.stringify(err.message));
-                res.write(JSON.stringify(fields));
-                res.write(JSON.stringify(files));
-                res.end();
-            });
+            res.writeHead(200, {});
+            if (req.form.err) res.write(JSON.stringify(req.form.err.message));
+            res.write(JSON.stringify(req.form.fields));
+            res.write(JSON.stringify(req.form.files));
+            res.end();
         } else {
             next();
         }
@@ -128,7 +126,7 @@ exports['test urlencoded'] = function(assert){
 
 exports['test bodyDecoder'] = function(assert){
     var server = connect.createServer(
-        connect.bodyParser(),
+        connect.bodyDecoder(),
         form(),
         function(req, res){
             res.writeHead(200, {});
