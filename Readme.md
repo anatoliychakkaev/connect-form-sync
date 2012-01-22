@@ -7,29 +7,26 @@ Connect Form is a multipart / urlencoded form parsing middleware utilizing [node
 
 via npm:
 
-	$ npm install connect-form
+	$ npm install connect-form-sync
 
 ## Example
 
-    var form = require('connect-form');
-    var server = connect.createServer(
-	    form({ keepExtensions: true }),
-	    function(req, res, next){
-		    // Form was submitted
-	        if (req.form) {
-		        // Do something when parsing is finished
-		        // and respond, or respond immediately
-		        // and work with the files.
-	            req.form.complete(function(err, fields, files){
-	                res.writeHead(200, {});
-	                if (err) res.write(JSON.stringify(err.message));
-	                res.write(JSON.stringify(fields));
-	                res.write(JSON.stringify(files));
-	                res.end();
-	            });
-	        // Regular request, pass to next middleware
-	        } else {
-	            next();
-	        }
-	    }
-	);
+checkout https://github.com/anatoliychakkaev/railway-example-upload
+
+    files_controller.js:
+
+    action('create', function () {
+        this.file = new File();
+        var tmpFile = req.form.files.file;
+        this.file.upload(tmpFile.name, tmpFile.path, function (err) {
+            if (err) {
+                console.log(err);
+                this.title = 'New file';
+                flash('error', 'File can not be created');
+                render('new');
+            } else {
+                flash('info', 'File created');
+                redirect(path_to.files);
+            }
+        }.bind(this));
+    });
